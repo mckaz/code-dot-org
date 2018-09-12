@@ -3,19 +3,12 @@
 # Table name: scripts
 #
 #  id              :integer          not null, primary key
-#  name            :string(255)      not null
+#  name            :string(255)
 #  created_at      :datetime
 #  updated_at      :datetime
 #  wrapup_video_id :integer
+#  trophies        :boolean          default(FALSE), not null
 #  hidden          :boolean          default(FALSE), not null
-#  user_id         :integer
-#  login_required  :boolean          default(FALSE), not null
-#  properties      :text(65535)
-#
-# Indexes
-#
-#  index_scripts_on_name             (name) UNIQUE
-#  index_scripts_on_wrapup_video_id  (wrapup_video_id)
 #
 
 require 'cdo/script_constants'

@@ -11,7 +11,7 @@ module Dashboard
   end
 
   def self.admin?(user_id)
-    !!db[:users][id: user_id, admin: true]
+    !!db[:users][id: user_id, admin: true] ##MKChange
   end
 
   def self.hidden_script_access?(user_id)
@@ -37,7 +37,7 @@ module Dashboard
     # Retrieves the indicated user from the database, ignoring soft-deletes.
     # @returns [User] for given user_id, or nil if not found in database
     def self.get_with_deleted(user_id)
-      row = Dashboard.db[:users].where(id: user_id).first
+      row = Dashboard.db[:users].where(id: user_id).first ##MKCHANGE
       return nil unless row
       Dashboard::User.new(row)
     end
@@ -63,8 +63,8 @@ module Dashboard
       case permission
         when 'admin' then admin?
         when 'teacher' then teacher?
-        else !!Dashboard.db[:user_permissions][user_id: id, permission: permission]
-      end
+        else !!Dashboard.db[:user_permissions][user_id: id, permission: permission] ## MKCHANGE
+      end 
     end
 
     # @returns [Hash] dashboard DB row for this user as a hash
@@ -91,13 +91,13 @@ module Dashboard
     # @return [Array[Integer]] the subset of other_user_ids that are followeds
     #   of the user encapsulated by this class.
     def get_followed_bys(other_user_ids)
-      Dashboard.db[:sections].
+      RDL.type_cast(Dashboard.db[:sections].
         join(:followers, section_id: :sections__id).
         join(:users, id: :followers__student_user_id).
         where(sections__user_id: id, sections__deleted_at: nil).
         where(followers__student_user_id: other_user_ids, followers__deleted_at: nil).
         where(users__deleted_at: nil).
-        select_map(:followers__student_user_id)
+        select_map(:followers__student_user_id), "Array<Integer>", force: true) ## MKCHANGE
     end
 
     # @param other_user_id [Integer] the user ID to check.
@@ -110,12 +110,12 @@ module Dashboard
         where(sections__user_id: id, sections__deleted_at: nil).
         where(followers__student_user_id: other_user_id, followers__deleted_at: nil).
         where(users__deleted_at: nil).
-        any?
+        any? ## MKCHANGE
     end
 
     def owned_sections
-      Dashboard.db[:sections].
-        select(:id).where(user_id: id, deleted_at: nil).all
+      RDL.type_cast(Dashboard.db[:sections].
+        select(:id).where(user_id: id, deleted_at: nil).all, "Array<{ id: Integer}>")
     end
   end
 end

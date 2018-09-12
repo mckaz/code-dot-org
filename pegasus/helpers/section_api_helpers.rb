@@ -9,21 +9,21 @@ require 'cdo/shared_constants'
 class DashboardStudent
   # Returns all users who are followers of the user with ID user_id.
   def self.fetch_user_students(user_id)
-    Dashboard.db[:sections].
+    RDL.type_cast(Dashboard.db[:sections].
       join(:followers, section_id: :sections__id).
       join(:users, id: :followers__student_user_id).
       where(sections__user_id: user_id, sections__deleted_at: nil).
       where(followers__deleted_at: nil).
       where(users__deleted_at: nil).
       select(*fields).
-      all
+      all, "Array<{ gender: String, user_type: String, hashed_email: String, secret_words: String, total_lines: Integer, birthday: Date, email: String, username: String, name: String, id: Integer }>", force: true)
   end
 
   def self.create(params)
     name = !params[:name].to_s.empty? ? params[:name].to_s : 'New Student'
-    gender = valid_gender?(params[:gender]) ? params[:gender] : nil
-    birthday = age_to_birthday(params[:age]) ?
-      age_to_birthday(params[:age]) : params[:birthday]
+    gender = valid_gender?(RDL.type_cast(params[:gender], 'String')) ? params[:gender] : nil
+    birthday = age_to_birthday(RDL.type_cast(params[:age], 'Integer')) ?
+      age_to_birthday(RDL.type_cast(params[:age], "Integer")) : params[:birthday]
     sharing_disabled = !!params[:sharing_disabled]
     created_at = DateTime.now
 
@@ -61,11 +61,11 @@ class DashboardStudent
         :secret_pictures__path___secret_picture_path,
       ).
       server(:default).
-      first
+      first ## MKCHANGE
 
     return if row.nil?
 
-    row.merge(age: birthday_to_age(row[:birthday]))
+    RDL.type_cast(row.merge(age: birthday_to_age(RDL.type_cast(row[:birthday], "Date", force: true))), "{ id: Integer, email: String, encrypted_password: String, reset_password_token: String, reset_password_sent_at: DateTime or Time, remember_created_at: DateTime or Time, sign_in_count: Integer, current_sign_in_at: DateTime or Time, last_sign_in_at: DateTime or Time, current_sign_in_ip: String, last_sign_in_ip: String, created_at: DateTime or Time, updated_at: DateTime or Time, username: String, provider: String, uid: String, admin: false or true, gender: String, name: String, language: String, birthday: Date, parent_email: String, deleted_at: DateTime or Time, hashed_email: String, properties: String, user_type: String, school: String, full_address: String, address: String, city: String, state: String, zip: String, lat: Float, lon: Float, total_lines: Integer, secret_words: String, secret_picture_id: Integer, secret_word_1_id: Integer, secret_word_2_id: Integer, path: String, age: String or Integer }", force: true) ## MKCHANGE
   end
 
   # @param ids [Array[Integer]] the IDs to fetch.
@@ -107,19 +107,19 @@ class DashboardStudent
     allowed_rows.values
   end
 
-  def self.update_if_allowed(params, dashboard_user_id)
+  def self.update_if_allowed(dashboard_user_id, params)
     user_to_update = Dashboard.db[:users].where(id: params[:id], deleted_at: nil)
     return if user_to_update.empty?
     return if Dashboard.db[:sections].
       join(:followers, section_id: :sections__id).
-      where(sections__user_id: dashboard_user_id, sections__deleted_at: nil).
+      where(sections__user_id:dashboard_user_id, sections__deleted_at: nil).
       where(followers__student_user_id: params[:id], followers__deleted_at: nil).
       empty?
 
-    fields = {updated_at: DateTime.now}
+    fields = RDL.type_cast({updated_at: DateTime.now}, "Hash<Symbol, %any>")
     fields[:name] = params[:name] unless params[:name].nil_or_empty?
-    fields[:encrypted_password] = encrypt_password(params[:password]) unless params[:password].nil_or_empty?
-    fields[:gender] = params[:gender] if valid_gender?(params[:gender])
+    fields[:encrypted_password] = encrypt_password(RDL.type_cast(params[:password], "String")) unless params[:password].nil_or_empty?
+    fields[:gender] = params[:gender] if valid_gender?(RDL.type_cast(params[:gender], "String"))
     fields[:birthday] = age_to_birthday(params[:age]) if age_to_birthday(params[:age])
     # TODO: Only save birthday if age changed.
     fields.merge!(random_secrets) if params[:secrets].to_s == 'reset'
@@ -127,7 +127,7 @@ class DashboardStudent
     rows_updated = user_to_update.update(fields)
     return nil unless rows_updated > 0
 
-    fetch_if_allowed(params[:id], dashboard_user_id)
+    fetch_if_allowed(RDL.type_cast(params[:id], "Integer"), dashboard_user_id)
   end
 
   def self.birthday_to_age(birthday)
@@ -186,7 +186,7 @@ class DashboardStudent
 
   def self.random_secret_word
     random_id = SecureRandom.random_number(Dashboard.db[:secret_words].count) + 1
-    Dashboard.db[:secret_words].first(id: random_id)[:word]
+    RDL.type_cast(Dashboard.db[:secret_words].first(id: random_id)[:word], 'String')
   end
 
   PEPPER = CDO.dashboard_devise_pepper
@@ -202,10 +202,10 @@ class DashboardCourseExperiments
   # @return [Array[String] An array of experiment names.
   @@course_experiments = nil
   def self.course_experiments
-    @@course_experiments ||= Dashboard.db[:course_scripts].
+    @@course_experiments ||= RDL.type_cast(Dashboard.db[:course_scripts].
       exclude(experiment_name: nil).
       all.
-      map {|cs| cs[:experiment_name]}
+      map {|cs| RDL.type_cast(cs, "Hash<Symbol, %any>")[:experiment_name] }, "Array<String>")
   end
 
   # Fetches course experiment data from the dashboard DB and returns
@@ -219,15 +219,15 @@ class DashboardCourseExperiments
   MAX_COURSE_EXPERIMENT_CACHE_SEC = 60
   def self.course_experiment_map
     @@course_experiment_map = nil if Time.now > @@course_experiment_map_last_update + MAX_COURSE_EXPERIMENT_CACHE_SEC
-    @@course_experiment_map ||= {}.tap do |map|
+    @@course_experiment_map ||= RDL.type_cast({}, "Hash<%any, %any>").tap do |map|
       @@course_experiment_map_last_update = Time.now
       Dashboard.db[:experiments].
         where(name: course_experiments, type: 'SingleUserExperiment').
         all.
         each do |row|
-        user_id = row[:min_user_id]
+        user_id = RDL.type_cast(row, "Hash<Symbol, %any>")[:min_user_id]
         map[user_id] ||= {}
-        map[user_id][row[:name]] = true
+        RDL.type_cast(map[user_id], "Hash<%any, %any>")[RDL.type_cast(row, "Hash<Symbol, %any>")[:name]] = true
       end
     end
   end
@@ -293,7 +293,7 @@ class DashboardSection
   #   or scripts dashboard db tables.
   # @param hidden [Boolean] True if the passed in item is hidden
   # @return AssignableInfo
-  def self.assignable_info(course_or_script, hidden=false)
+  def self.assignable_info(hidden, course_or_script)
     info = ScriptConstants.assignable_info(course_or_script)
     info[:name] = I18n.t("#{info[:name]}_name", default: info[:name])
     info[:name] += " *" if hidden
@@ -341,7 +341,7 @@ class DashboardSection
         where(where_clause).
         select(:id, :name, :hidden).
         all.
-        map {|script| assignable_info(script, script[:hidden])}
+        map {|script| assignable_info(RDL.type_cast(RDL.type_cast(script, "Hash<Symbol, %any>")[:hidden], "%bool"), RDL.type_cast(script, "{ name: String, hidden: false or true, id: Integer }"))}
     @@script_cache[script_cache_key] = scripts unless rack_env?(:levelbuilder)
     scripts
   end
@@ -394,7 +394,7 @@ class DashboardSection
       all.
       # Only return courses we've whitelisted in ScriptConstants
       select {|course| ScriptConstants.script_in_category?(:full_course, course[:name])}.
-      map {|course| assignable_info(course)}
+      map {|course| assignable_info(false, course)}
     @@course_cache[course_cache_key] = courses unless rack_env?(:levelbuilder)
     courses
   end
@@ -423,17 +423,17 @@ class DashboardSection
   end
 
   def self.create(params)
-    return nil unless params[:user] && params[:user][:user_type] == 'teacher'
+    return nil unless params[:user] && RDL.type_cast(params[:user], "Hash<Symbol, Object>")[:user_type] == 'teacher'
 
     name = !params[:name].to_s.empty? ? params[:name].to_s : 'New Section'
     login_type =
       params[:login_type].to_s == 'none' ? 'email' : params[:login_type].to_s
     login_type = 'word' unless valid_login_type?(login_type)
     grade = valid_grade?(params[:grade].to_s) ? params[:grade].to_s : nil
-    script_id = params[:script] && valid_script_id?(params[:script][:id], params[:user][:id]) ?
-      params[:script][:id].to_i : params[:script_id]
-    course_id = params[:course_id] && valid_course_id?(params[:course_id]) ?
-      params[:course_id].to_i : nil
+    script_id = params[:script] && valid_script_id?(RDL.type_cast(RDL.type_cast(params[:script], "Hash<Symbol, %any>")[:id], "Integer"), RDL.type_cast(RDL.type_cast(params[:user], "Hash<Symbol, %any>")[:id], "Integer")) ?
+      RDL.type_cast(RDL.type_cast(params[:script], "Hash<Symbol, %any>")[:id], "Integer").to_i : params[:script_id]
+    course_id = params[:course_id] && valid_course_id?(RDL.type_cast(params[:course_id], "Integer")) ?
+      RDL.type_cast(params[:course_id], "Integer").to_i : nil
     stage_extras = params[:stage_extras] ? params[:stage_extras] : false
     pairing_allowed = params[:pairing_allowed].nil? ? true : params[:pairing_allowed]
     created_at = DateTime.now
@@ -443,7 +443,7 @@ class DashboardSection
     begin
       row = Dashboard.db[:sections].insert(
         {
-          user_id: params[:user][:id],
+          user_id: RDL.type_cast(params[:user], "Hash<Symbol, %any>")[:id],
           name: name,
           login_type: login_type,
           grade: grade,
@@ -454,18 +454,18 @@ class DashboardSection
           pairing_allowed: pairing_allowed,
           hidden: false,
           created_at: created_at,
-          updated_at: created_at,
+          updated_at: created_at
         }
       )
     rescue Sequel::UniqueConstraintViolation
       tries += 1
-      retry if tries < 3
+      RDL.type_cast("retry if tries < 3", "%bot", force: true)
       raise
     end
 
-    if params[:script] && valid_script_id?(params[:script][:id], params[:user][:id])
-      DashboardUserScript.assign_script_to_user(params[:script][:id].to_i, params[:user][:id])
-    end
+    #if params[:script] && valid_script_id?(params[:script][:id], params[:user][:id])
+    #  DashboardUserScript.assign_script_to_user(params[:script][:id].to_i, params[:user][:id])
+    #end
 
     row
   end
@@ -482,11 +482,11 @@ class DashboardSection
 
     Dashboard.db.transaction do
       Dashboard.db[:followers].where(section_id: id, deleted_at: nil).
-        update(deleted_at: time_now)
+        update(deleted_at:time_now)
       Dashboard.db[:sections].where(id: id).update(deleted_at: time_now)
     end
 
-    row
+    RDL.type_cast(row, "{ id: Integer, user_id: Integer, name: String, created_at: Time or DateTime, updated_at: Time or DateTime, code: String, deleted_at: Time or DateTime, login_type: String, script_id: Integer, login_method: Integer, grade: String, admin_code: String, stage_extras: false or true, pairing_allowed: false or true, hidden: false or true, course_id: Integer, sharing_disabled: false or true }")
   end
 
   def self.fetch_if_allowed(id, user_id)
@@ -496,7 +496,7 @@ class DashboardSection
 
     return nil unless row = Dashboard.db[:sections].
       join(:users, id: :user_id).
-      where(sections__id: id, sections__deleted_at: nil).
+      where(sections__id:id, sections__deleted_at: nil).
       select(*fields).
       first
 
@@ -537,7 +537,7 @@ class DashboardSection
   end
 
   def add_student(student)
-    student_id = student[:id] || DashboardStudent.create(student)
+    student_id = student[:id] || DashboardStudent.create(RDL.type_cast(student, "{ name: String, age: Integer, gender: String, birthday: Date, sharing_disabled: false or true, id: Integer, admin: false or true }"))
     return nil unless student_id
     return nil if student[:admin]
 
@@ -546,23 +546,23 @@ class DashboardSection
     existing_follower = Dashboard.db[:followers].where(section_id: @row[:id], student_user_id: student_id).first
     if existing_follower
       Dashboard.db[:followers].where(id: existing_follower[:id]).update(deleted_at: nil, updated_at: time_now)
-      return student_id
+      return RDL.type_cast(student_id, 'Integer')
     end
 
     Dashboard.db[:followers].insert(
       {
         section_id: @row[:id],
         student_user_id: student_id,
-        created_at: time_now,
+        created_at: time_now, 
         updated_at: time_now
       }
     )
-    student_id
+    RDL.type_cast(student_id, "Integer")
   end
 
   def add_students(students)
     student_ids = students.map {|i| add_student(i)}.compact
-    DashboardUserScript.assign_script_to_users(@row[:script_id], student_ids) if @row[:script_id] && !student_ids.blank?
+    DashboardUserScript.assign_script_to_users(RDL.type_cast(@row[:script_id], 'Integer'), student_ids) if @row[:script_id] && !student_ids.blank?
     return student_ids
   end
 
@@ -638,10 +638,10 @@ class DashboardSection
   end
 
   def script
-    @script ||= Dashboard.db[:scripts].
+    @script ||= RDL.type_cast(Dashboard.db[:scripts].
       where(id: @row[:script_id]).
       select(:id, :name).
-      first
+      first, "{ id: Integer, name: String, created_at: Time or DateTime, updated_at: Time or DateTime, wrapup_video_id: Integer, hidden: %bool, trophies: %bool }")
   end
 
   def to_owner_hash
@@ -669,20 +669,20 @@ class DashboardSection
   end
 
   def self.update_if_owner(params)
-    section_id = params[:id]
-    return nil unless params[:user] && params[:user][:user_type] == 'teacher'
-    user_id = params[:user][:id]
+    section_id = RDL.type_cast(params[:id], "Integer")
+    return nil unless params[:user] && RDL.type_cast(params[:user], "Hash<Symbol, Object>")[:user_type] == 'teacher'
+    user_id = RDL.type_cast(RDL.type_cast(params[:user], "Hash<Symbol, Object>")[:id], "Integer")
 
-    fields = {updated_at: DateTime.now}
+    fields = RDL.type_cast({updated_at: DateTime.now}, "Hash<Symbol, %any>")
     fields[:name] = params[:name] unless params[:name].nil_or_empty?
-    fields[:login_type] = params[:login_type] if valid_login_type?(params[:login_type])
-    fields[:grade] = params[:grade] if valid_grade?(params[:grade])
+    fields[:login_type] = params[:login_type] if valid_login_type?(RDL.type_cast(params[:login_type], "String"))
+    fields[:grade] = params[:grade] if valid_grade?(RDL.type_cast(params[:grade], "String"))
     fields[:stage_extras] = params[:stage_extras]
     fields[:pairing_allowed] = params[:pairing_allowed]
     fields[:hidden] = params[:hidden] unless params[:hidden].nil?
 
-    if params[:course_id] && valid_course_id?(params[:course_id])
-      fields[:course_id] = params[:course_id].to_i
+    if params[:course_id] && valid_course_id?(RDL.type_cast(params[:course_id], "Integer"))
+      fields[:course_id] = RDL.type_cast(params[:course_id], "Integer").to_i
       # explicitly clear script_id (unless we're also passed in a valid script id
       # as a param
       fields[:script_id] = nil
@@ -691,10 +691,10 @@ class DashboardSection
       fields[:course_id] = nil
     end
 
-    if params[:script] && valid_script_id?(params[:script][:id], user_id)
-      fields[:script_id] = params[:script][:id].to_i
-      DashboardUserScript.assign_script_to_section(fields[:script_id], section_id)
-      DashboardUserScript.assign_script_to_user(fields[:script_id], user_id)
+    if params[:script] && valid_script_id?(RDL.type_cast(params[:script], "Hash<Symbol, Integer>")[:id], user_id)
+      fields[:script_id] = RDL.type_cast(params[:script], "Hash<Symbol, Integer>")[:id].to_i
+      DashboardUserScript.assign_script_to_section(RDL.type_cast(fields[:script_id], "Integer"), section_id)
+      DashboardUserScript.assign_script_to_user(RDL.type_cast(fields[:script_id], "Integer"), user_id)
     elsif !params[:course_id] && !params[:script_id]
       # If a null course (no choice or decide later) is chosen, then update the course and script to be nil
       fields[:course_id] = nil
@@ -736,7 +736,7 @@ class DashboardUserScript
       select(:student_user_id).
       where(section_id: section_id, deleted_at: nil).
       map {|f| f[:student_user_id]}
-    DashboardUserScript.assign_script_to_users(script_id, student_user_ids)
+    DashboardUserScript.assign_script_to_users(script_id, RDL.type_cast(student_user_ids, "Array<Integer>"))
   end
 
   # Assigns a script to the user via user_scripts, creating a new user_scripts object if necessary.
@@ -776,9 +776,9 @@ class DashboardUserScript
     all_existing = Dashboard.db[:user_scripts].where(user_id: user_ids, script_id: script_id)
     all_existing_user_ids = all_existing.map {|user_script| user_script[:user_id]}
 
-    missing_assigned_at = []
+    missing_assigned_at = RDL.type_cast([], 'Array<Integer>', force: true)
     all_existing.each do |existing|
-      missing_assigned_at << existing[:id] unless existing[:assigned_at]
+      missing_assigned_at << RDL.type_cast(existing[:id], "Integer") unless existing[:assigned_at]
     end
     Dashboard.db[:user_scripts].where(id: missing_assigned_at).update(
       updated_at: time_now,

@@ -2,15 +2,12 @@
 #
 # Table name: concepts
 #
-#  id         :integer          not null, primary key
-#  name       :string(255)
-#  created_at :datetime
-#  updated_at :datetime
-#  video_id   :integer
-#
-# Indexes
-#
-#  index_concepts_on_video_id  (video_id)
+#  id          :integer          not null, primary key
+#  name        :string(255)
+#  description :string(1024)
+#  created_at  :datetime
+#  updated_at  :datetime
+#  video_id    :integer
 #
 
 # A Concept contains a set of Levels

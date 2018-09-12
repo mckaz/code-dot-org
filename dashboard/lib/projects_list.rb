@@ -183,7 +183,7 @@ module ProjectsList
     end
 
     def fetch_published_project_types(project_groups, limit:, published_before: nil)
-      users = "dashboard_#{CDO.rack_env}__users".to_sym
+      users = RDL.type_cast("dashboard_#{CDO.rack_env}__users".to_sym, ":users", force: true) # get it to work with Sequel types (without qualified database name)
       {}.tap do |projects|
         project_groups.map do |project_group|
           project_types = PUBLISHED_PROJECT_TYPE_GROUPS[project_group]

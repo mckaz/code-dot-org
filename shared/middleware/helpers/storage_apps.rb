@@ -29,7 +29,7 @@ class StorageApps
     }
     row[:id] = @table.insert(row)
 
-    storage_encrypt_channel_id(row[:storage_id], row[:id])
+    storage_encrypt_channel_id(RDL.type_cast(row[:storage_id], 'Integer'), RDL.type_cast(row[:id], 'Integer'))
   end
 
   def delete(channel_id)
@@ -93,15 +93,15 @@ class StorageApps
     raise NotFound, "channel `#{channel_id}` not found" if update_count == 0
 
     project = @table.where(id: id).first
-    StorageApps.get_published_project_data(project, channel_id).merge(
+    RDL.type_cast(StorageApps.get_published_project_data(channel_id, RDL.type_cast(project, "{ id: Integer, storage_id: Integer, value: String, updated_at: Time or DateTime, updated_ip: String, state: String, created_at: Time or DateTime, abuse_score: Integer, project_type: String, published_at: Time or DateTime, standalone: false or true, remix_parent_id: Integer }")).merge(
       # For privacy reasons, include only the first initial of the student's name.
-      studentName: user && UserHelpers.initial(user[:name]),
-      studentAgeRange: user && UserHelpers.age_range_from_birthday(user[:birthday]),
-    )
+      studentName: user && UserHelpers.initial(RDL.type_cast(user[:name], 'String')),
+      studentAgeRange: user && UserHelpers.age_range_from_birthday(RDL.type_cast(user[:birthday], 'DateTime')),
+    ), '{ channel: Integer, name: String, thumbnailUrl: String, type: String, publishedAt: DateTime, studentName: { name: String, birthday: DateTime } or String, studentAgeRange: { name: String, birthday: DateTime } or String }')
   end
 
   # extracts published project data from a project (aka storage_apps table row).
-  def self.get_published_project_data(project, channel_id)
+  def self.get_published_project_data(channel_id, project)
     project_value = JSON.parse(project[:value])
     {
       channel: channel_id,
@@ -135,13 +135,13 @@ class StorageApps
     row = @table.where(id: id).exclude(state: 'deleted').first
     raise NotFound, "channel `#{channel_id}` not found" unless row
 
-    row[:abuse_score]
+    RDL.type_cast(row[:abuse_score], 'Integer')
   end
 
   # Determine if the current user can view the project
   def get_sharing_disabled(channel_id, current_user_id)
     owner_storage_id, storage_app_id = storage_decrypt_channel_id(channel_id)
-    owner_user_id = user_storage_ids_table.where(id: owner_storage_id).first[:user_id]
+    owner_user_id = RDL.type_cast(user_storage_ids_table.where(id: owner_storage_id).first[:user_id], "Integer")
 
     # Sharing of a project is not disabled for the project owner
     # or the teachers of the project owner
@@ -184,7 +184,7 @@ class StorageApps
     row = @table.where(id: id).exclude(state: 'deleted').first
     raise NotFound, "channel `#{channel_id}` not found" unless row
 
-    new_score = row[:abuse_score] + (JSON.parse(row[:value])['frozen'] ? 0 : 10)
+    new_score = RDL.type_cast(row[:abuse_score], 'Integer') + (JSON.parse(RDL.type_cast(row[:value], 'String'))['frozen'] ? 0 : 10)
 
     update_count = @table.where(id: id).exclude(state: 'deleted').update({abuse_score: new_score})
     raise NotFound, "channel `#{channel_id}` not found" if update_count == 0

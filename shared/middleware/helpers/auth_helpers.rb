@@ -18,7 +18,7 @@ end
 # @returns [User] the dashboard user associated with the current request.
 def current_user
   nil if current_user_id.nil?
-  @dashboard_user ||= DASHBOARD_DB[:users][id: current_user_id]
+  @dashboard_user ||= RDL.type_cast(DASHBOARD_DB[:users][id: current_user_id], "{ id: Integer, email: String, encrypted_password: String, reset_password_token: String, reset_password_sent_at: DateTime or Time, remember_created_at: DateTime or Time, sign_in_count: Integer, current_sign_in_at: DateTime or Time, last_sign_in_at: DateTime or Time, current_sign_in_ip: String, last_sign_in_ip: String, created_at: DateTime or Time, updated_at: DateTime or Time, username: String, provider: String, uid: String, admin: false or true, gender: String, name: String, language: String, birthday: Date, parent_email: String, deleted_at: DateTime or Time, hashed_email: String, properties: String, user_type: String, school: String, full_address: String, address: String, city: String, state: String, zip: String, lat: Float, lon: Float, total_lines: Integer, secret_words: String, secret_picture_id: Integer, secret_word_1_id: Integer, secret_word_2_id: Integer }", force: true) ## MKCHANGE
 end
 
 # Returns true if the current user is under 13 or if age is unknown.
@@ -35,7 +35,7 @@ end
 def get_user_sharing_disabled(user_id)
   user_properties = DASHBOARD_DB[:users].select(:properties).first(id: user_id)
   return false unless user_properties
-  get_sharing_disabled_from_properties(user_properties[:properties])
+  get_sharing_disabled_from_properties(RDL.type_cast(user_properties[:properties], "String", force: true)) ## MKCHANGE
 end
 
 def get_sharing_disabled_from_properties(properties)
@@ -55,7 +55,7 @@ def has_permission?(permission)
   return false unless current_user
 
   if @user_permissions.nil?
-    @user_permissions = DASHBOARD_DB[:user_permissions].where(user_id: current_user_id).pluck(:permission)
+    @user_permissions = RDL.type_cast(DASHBOARD_DB[:user_permissions].where(user_id: current_user_id).pluck(:permission), "Array<String>", force: true)
   end
   @user_permissions.include? permission
 end
@@ -68,9 +68,10 @@ def owns_section?(section_id)
   DASHBOARD_DB[:sections].where(id: section_id, user_id: current_user_id).any?
 end
 
+
 # @param [Integer] student_id
 # @returns [Boolean] true iff the current user, or given user, is the teacher for the student of the given id
-def teaches_student?(student_id, user_id = current_user_id)
+def teaches_student?(student_id, user_id = current_user_id)#RDL.type_cast(current_user_id, "Integer", force: true))
   return false unless student_id && user_id
   DASHBOARD_DB[:sections].
       join(:followers, section_id: :sections__id).
@@ -78,5 +79,5 @@ def teaches_student?(student_id, user_id = current_user_id)
       where(sections__user_id: user_id, sections__deleted_at: nil).
       where(followers__student_user_id: student_id, followers__deleted_at: nil).
       where(users__deleted_at: nil).
-      any?
+      any? ## MKCHANGE
 end

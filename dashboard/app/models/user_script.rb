@@ -14,7 +14,6 @@
 #
 # Indexes
 #
-#  index_user_scripts_on_script_id              (script_id)
 #  index_user_scripts_on_user_id_and_script_id  (user_id,script_id) UNIQUE
 #
 

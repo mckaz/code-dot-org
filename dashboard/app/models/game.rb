@@ -6,12 +6,9 @@
 #  name           :string(255)
 #  created_at     :datetime
 #  updated_at     :datetime
+#  base_url       :string(255)
 #  app            :string(255)
 #  intro_video_id :integer
-#
-# Indexes
-#
-#  index_games_on_intro_video_id  (intro_video_id)
 #
 
 # An ordered set of levels associated with a single app, e.g. Farmer2

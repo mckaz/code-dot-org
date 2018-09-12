@@ -2,15 +2,11 @@
 #
 # Table name: callouts
 #
-#  id               :integer          not null, primary key
-#  element_id       :string(1024)     not null
-#  localization_key :string(1024)     not null
-#  created_at       :datetime
-#  updated_at       :datetime
-#  script_level_id  :integer
-#  qtip_config      :text(65535)
-#  on               :string(255)
-#  callout_text     :string(255)
+#  id         :integer          not null, primary key
+#  element_id :string(1024)     not null
+#  text       :string(1024)     not null
+#  created_at :datetime
+#  updated_at :datetime
 #
 
 class Callout < ActiveRecord::Base
