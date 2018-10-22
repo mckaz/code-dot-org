@@ -49,6 +49,7 @@ DASHBOARD_TEST_TABLES.each do |table|
   DASHBOARD_DB[table.to_sym].truncate
 end.freeze
 
+
 module SetupTest
   def around(&block)
     random = Random.new(0)
@@ -85,5 +86,15 @@ module SetupTest
     DASHBOARD_TEST_TABLES.each do |table|
       DASHBOARD_DB.execute("ALTER TABLE `#{table}` AUTO_INCREMENT = 1")
     end
+  end
+end
+
+class Minitest::Test
+  if ENV["TYPECHECK"]
+    puts "Run typechecker here..."
+    require_relative '../../pegasus/helper_modules/dashboard'
+    require_relative '../../pegasus/helpers/section_api_helpers'
+    require_relative '../middleware/helpers/storage_apps'
+    require_relative '../../typecheck.rb'
   end
 end

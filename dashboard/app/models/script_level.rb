@@ -2,22 +2,13 @@
 #
 # Table name: script_levels
 #
-#  id          :integer          not null, primary key
-#  script_id   :integer          not null
-#  chapter     :integer
-#  created_at  :datetime
-#  updated_at  :datetime
-#  stage_id    :integer
-#  position    :integer
-#  assessment  :boolean
-#  properties  :text(65535)
-#  named_level :boolean
-#  bonus       :boolean
-#
-# Indexes
-#
-#  index_script_levels_on_script_id  (script_id)
-#  index_script_levels_on_stage_id   (stage_id)
+#  id           :integer          not null, primary key
+#  level_id     :integer          not null
+#  script_id    :integer          not null
+#  chapter      :integer
+#  created_at   :datetime
+#  updated_at   :datetime
+#  game_chapter :integer
 #
 
 require 'cdo/shared_constants'

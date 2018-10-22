@@ -1,3 +1,5 @@
+# coding: utf-8
+require_relative './test_helper'
 require_relative '../../lib/cdo/pegasus'
 require 'minitest/autorun'
 require_relative '../src/env'
@@ -109,7 +111,7 @@ class SectionApiHelperTest < SequelTestCase
       it 'updates students' do
         params = {id: FakeDashboard::STUDENT[:id], name: 'Updated User'}
         Dashboard.db.transaction(rollback: :always) do
-          updated_student = DashboardStudent.update_if_allowed(params, FakeDashboard::TEACHER[:id])
+          updated_student = DashboardStudent.update_if_allowed(FakeDashboard::TEACHER[:id], params)
           assert_equal 'Updated User', updated_student[:name]
         end
       end
@@ -117,7 +119,7 @@ class SectionApiHelperTest < SequelTestCase
       it 'noops for students in deleted sections' do
         params = {id: FakeDashboard::STUDENT_DELETED_SECTION[:id], name: 'Updated User'}
         updated_student = DashboardStudent.update_if_allowed(
-          params, FakeDashboard::TEACHER_DELETED_SECTION[:id]
+          FakeDashboard::TEACHER_DELETED_SECTION[:id], params
         )
         assert_nil updated_student
         assert_equal FakeDashboard::STUDENT_DELETED_SECTION[:name],
@@ -127,7 +129,7 @@ class SectionApiHelperTest < SequelTestCase
       it 'noops for deleted followers' do
         params = {id: FakeDashboard::STUDENT_DELETED_FOLLOWER[:id], name: 'Updated User'}
         updated_student = DashboardStudent.update_if_allowed(
-          params, FakeDashboard::TEACHER_DELETED_FOLLOWER[:id]
+          FakeDashboard::TEACHER_DELETED_FOLLOWER[:id], params
         )
         assert_nil updated_student
         assert_equal FakeDashboard::STUDENT_DELETED_FOLLOWER[:name],
@@ -137,7 +139,7 @@ class SectionApiHelperTest < SequelTestCase
       it 'noops for deleted students' do
         params = {id: FakeDashboard::STUDENT_DELETED[:id], name: 'Updated User'}
         updated_student = DashboardStudent.update_if_allowed(
-          params, FakeDashboard::TEACHER_DELETED_USER[:id]
+          FakeDashboard::TEACHER_DELETED_USER[:id], params
         )
         assert_nil updated_student
         assert_equal FakeDashboard::STUDENT_DELETED[:name],

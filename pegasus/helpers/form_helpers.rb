@@ -5,6 +5,7 @@ require lib_dir 'utf8mb4_extensions'
 
 include PegasusFormValidation
 
+
 # Deletes a form from the DB and from SOLR.
 # @param [String] kind The kind of form to delete.
 # @param [String] secret The secret associated with the form to delete.

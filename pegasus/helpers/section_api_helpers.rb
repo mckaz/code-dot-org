@@ -4,9 +4,12 @@ require 'cdo/user_helpers'
 require_relative '../helper_modules/dashboard'
 require 'cdo/code_generation'
 require 'cdo/shared_constants'
+require 'rdl'
+require 'types/core'
 
 # TODO: Change the APIs below to check logged in user instead of passing in a user id
 class DashboardStudent
+  extend RDL::Annotate
   # Returns all users who are followers of the user with ID user_id.
   def self.fetch_user_students(user_id)
     Dashboard.db[:sections].
@@ -107,7 +110,7 @@ class DashboardStudent
     allowed_rows.values
   end
 
-  def self.update_if_allowed(params, dashboard_user_id)
+  def self.update_if_allowed(dashboard_user_id, params)
     user_to_update = Dashboard.db[:users].where(id: params[:id], deleted_at: nil)
     return if user_to_update.empty?
     return if Dashboard.db[:sections].
@@ -197,6 +200,7 @@ class DashboardStudent
 end
 
 class DashboardCourseExperiments
+  extend RDL::Annotate
   # Fetches a list of all experiments pertaining to courses and caches the
   # result.
   # @return [Array[String] An array of experiment names.
@@ -248,6 +252,7 @@ class DashboardCourseExperiments
 end
 
 class DashboardSection
+  extend RDL::Annotate
   def initialize(row)
     @row = row
   end
@@ -293,7 +298,7 @@ class DashboardSection
   #   or scripts dashboard db tables.
   # @param hidden [Boolean] True if the passed in item is hidden
   # @return AssignableInfo
-  def self.assignable_info(course_or_script, hidden=false)
+  def self.assignable_info(hidden, course_or_script)
     info = ScriptConstants.assignable_info(course_or_script)
     info[:name] = I18n.t("#{info[:name]}_name", default: info[:name])
     info[:name] += " *" if hidden
@@ -341,7 +346,7 @@ class DashboardSection
         where(where_clause).
         select(:id, :name, :hidden).
         all.
-        map {|script| assignable_info(script, script[:hidden])}
+        map {|script| assignable_info(script[:hidden], script)}
     @@script_cache[script_cache_key] = scripts unless rack_env?(:levelbuilder)
     scripts
   end
@@ -394,7 +399,7 @@ class DashboardSection
       all.
       # Only return courses we've whitelisted in ScriptConstants
       select {|course| ScriptConstants.script_in_category?(:full_course, course[:name])}.
-      map {|course| assignable_info(course)}
+      map {|course| assignable_info(false, course)}
     @@course_cache[course_cache_key] = courses unless rack_env?(:levelbuilder)
     courses
   end
@@ -459,13 +464,13 @@ class DashboardSection
       )
     rescue Sequel::UniqueConstraintViolation
       tries += 1
-      retry if tries < 3
+      RDL.type_cast("retry if tries < 3", "%bot", force: true)
       raise
     end
 
-    if params[:script] && valid_script_id?(params[:script][:id], params[:user][:id])
-      DashboardUserScript.assign_script_to_user(params[:script][:id].to_i, params[:user][:id])
-    end
+    #if params[:script] && valid_script_id?(params[:script][:id], params[:user][:id])
+    #  DashboardUserScript.assign_script_to_user(params[:script][:id].to_i, params[:user][:id])
+    #end
 
     row
   end
@@ -728,6 +733,7 @@ class DashboardSection
 end
 
 class DashboardUserScript
+  extend RDL::Annotate
   # Assigns a script to all users enrolled in the section, creating a new user_scripts object if
   # necessary. The method noops for those user_scripts that already exist with assigned_at set.
   # WARNING: This method does not verify that the section and student_users exist (aren't deleted).
@@ -776,7 +782,7 @@ class DashboardUserScript
     all_existing = Dashboard.db[:user_scripts].where(user_id: user_ids, script_id: script_id)
     all_existing_user_ids = all_existing.map {|user_script| user_script[:user_id]}
 
-    missing_assigned_at = []
+    missing_assigned_at = RDL.type_cast([], 'Array<Integer>', force: true)
     all_existing.each do |existing|
       missing_assigned_at << existing[:id] unless existing[:assigned_at]
     end

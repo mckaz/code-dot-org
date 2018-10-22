@@ -68,6 +68,7 @@ def owns_section?(section_id)
   DASHBOARD_DB[:sections].where(id: section_id, user_id: current_user_id).any?
 end
 
+
 # @param [Integer] student_id
 # @returns [Boolean] true iff the current user, or given user, is the teacher for the student of the given id
 def teaches_student?(student_id, user_id = current_user_id)

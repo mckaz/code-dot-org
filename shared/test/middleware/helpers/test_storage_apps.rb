@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+require 'rdl'
 require_relative '../../../middleware/helpers/storage_apps'
 
 class StorageAppsTest < Minitest::Test
