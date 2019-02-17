@@ -1,6 +1,7 @@
 require 'rdl'
 require 'types/core'
-require_relative 'db_types'
+#require_relative 'db_types'
+require_relative '../db-types/sequel/db_types.rb'
 require_relative 'orm'
 require_relative './shared/middleware/helpers/auth_helpers.rb'
 require 'date'
@@ -24,11 +25,11 @@ end
 =end
 module RDL::Globals
   # Map from table names (symbols) to their schema types, which should be a Table type
-  @db_schema = {}
+  @seq_db_schema = {}
 end
 
 class << RDL::Globals
-  attr_accessor :db_schema
+  attr_accessor :seq_db_schema
 end
 
 RDL::Globals.info.info['ActiveRecord::Associations::ClassMethods'] = nil
@@ -74,7 +75,7 @@ def gen_schema(db)
       RDL.type kl_name, "#{col[0]}=", "(#{typ}) -> #{typ}", wrap: false
     }
     hash_str.chomp!(",") << " }"
-    RDL::Globals.db_schema[table] = RDL::Globals.parser.scan_str "#T #{hash_str}"
+    RDL::Globals.seq_db_schema[table] = RDL::Globals.parser.scan_str "#T #{hash_str}"
   }
 end
 
@@ -175,7 +176,7 @@ RDL.type Dashboard::User, :has_permission?, '(String) -> %bool', wrap: false, ty
 RDL.type Object, :teaches_student?, "(Integer, ?Integer) -> %bool", typecheck: :later, wrap: false
 RDL.type Object, :owns_section?, "(Integer) -> %bool", typecheck: :later, wrap: false
 RDL.type Object, :has_permission?, "(String) -> %bool", typecheck: :later, wrap: false
-RDL.type Object, :current_user, "() -> #{user_record}", wrap: false, typecheck: :later ## this one had the annotation error
+RDL.type Object, :current_user, "() -> User", wrap: false, typecheck: :later ## this one had the annotation error
 RDL.type Object, :get_user_sharing_disabled, '(Integer) -> %bool', wrap: false, typecheck: :later
 RDL.type DashboardStudent, 'self.fetch_user_students', "(Integer) -> Array<{ gender: String, user_type: String, hashed_email: String, secret_words: String, total_lines: Integer, birthday: Date, email: String, username: String, name: String, id: Integer }>", typecheck: :later, wrap: false ## "returns all users"
 RDL.type DashboardStudent, 'self.fields', '() -> [:users__id___id,:users__name___name,:users__username___username,:users__email___email,:users__hashed_email___hashed_email,:users__user_type___user_type,:users__gender___gender,:users__birthday___birthday,:users__total_lines___total_lines,:users__secret_words___secret_words]', wrap: false, typecheck: :later

@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 ruby '~> 2.2'
 
-gem 'rdl', path: "~/Documents/works/comp-types/rdl/"#"~/Documents/works/public-rdl/rdl/"
+#gem 'rdl', path: "~/Documents/works/comp-types/rdl/"#"~/Documents/works/public-rdl/rdl/"
+gem 'rdl', path: "~/Documents/works/pldi-rdl/rdl/"
 # git: 'https://github.com/mckaz/code-dot-org-rdl.git'
 
 # Force HTTPS for github-source gems.

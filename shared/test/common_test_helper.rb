@@ -97,4 +97,12 @@ class Minitest::Test
     require_relative '../middleware/helpers/storage_apps'
     require_relative '../../typecheck.rb'
   end
+  if ENV["NODYNCHECK"]
+    puts "Run typechecker here..."
+    RDL::Config.instance.check_comp_types = false
+    require_relative '../../pegasus/helper_modules/dashboard'
+    require_relative '../../pegasus/helpers/section_api_helpers'
+    require_relative '../middleware/helpers/storage_apps'
+    require_relative '../../typecheck.rb'
+  end
 end
