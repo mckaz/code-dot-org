@@ -120,7 +120,7 @@ RDL.type Dashboard::User, :has_permission?, '(String) -> %bool', wrap: false, ty
 RDL.type Object, :teaches_student?, "(Integer, ?Integer) -> %bool", typecheck: :later, wrap: false # 0
 RDL.type Object, :owns_section?, "(Integer) -> %bool", typecheck: :later, wrap: false # 0
 RDL.type Object, :has_permission?, "(String) -> %bool", typecheck: :later, wrap: false ## TODO: nested type casts here # 1
-RDL.type Object, :current_user, "() -> #{user_record}", wrap: false, typecheck: :later ## this one had the annotation error ## TODO: nested type casts here # 1
+RDL.type Object, :current_user, "() -> User", wrap: false, typecheck: :later ## this one had the annotation error ## TODO: nested type casts here # 1
 RDL.type Object, :get_user_sharing_disabled, '(Integer) -> %bool', wrap: false, typecheck: :later # 1
 RDL.type DashboardStudent, 'self.fields', '() -> [:users__id___id,:users__name___name,:users__username___username,:users__email___email,:users__hashed_email___hashed_email,:users__user_type___user_type,:users__gender___gender,:users__birthday___birthday,:users__total_lines___total_lines,:users__secret_words___secret_words]', wrap: false, typecheck: :later # 0
 RDL.type DashboardStudent, 'self.fetch_user_students', "(Integer) -> Array<{ gender: String, user_type: String, hashed_email: String, secret_words: String, total_lines: Integer, birthday: Date, email: String, username: String, name: String, id: Integer }>", typecheck: :later, wrap: false ## TODO: nested type casts here # 1
@@ -161,7 +161,9 @@ RDL.type StorageApps, :reset_abuse, "(Integer) -> Integer", wrap: false, typeche
 
 # 70 total type casts
 
+
+RDL::Config.instance.use_dep_types = false
 RDL.do_typecheck :later
 
-#### NOTE: Since first submitting paper, number of type casts in the dependent version has been revised down by 1, from 5 to 4.
+
 

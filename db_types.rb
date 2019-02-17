@@ -360,7 +360,7 @@ class Table
         }
         return targs[0]
       else
-        return targs[0] if (meth==:where) && targs[0] == RDL::Globals.types[:string]
+        return targs[0] if (meth==:where) && (targs[0] <= RDL::Globals.types[:string])
         raise "TODO WITH #{trec} AND #{targs} AND #{meth}"
       end
     when RDL::Type::NominalType
