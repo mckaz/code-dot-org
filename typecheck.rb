@@ -128,7 +128,10 @@ RDL.var_type Dashboard::User, :@row, $user_record
 
 
 ## Call to `do_typecheck` will type check all methods above with :later tag.
-RDL.do_typecheck :later
+## The second argument is optional and is used for printing configurations.
+RDL.do_typecheck :later, (ENV["NODYNCHECK"] || ENV["TYPECHECK"])
+
+
 
 
 
