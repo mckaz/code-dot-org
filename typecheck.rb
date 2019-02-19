@@ -1,16 +1,17 @@
-require 'rdl'
-require 'types/core'
-require_relative '../db-types/sequel/db_types.rb'
-require_relative './shared/middleware/helpers/auth_helpers.rb'
-require 'date'
+Kernel.silence_warnings {
+  require 'rdl'
+  require 'types/core'
+  require_relative '../db-types/sequel/db_types.rb'
+  require_relative './shared/middleware/helpers/auth_helpers.rb'
+  require 'date'
 
-## The file below defines global vars for some commonly used finite hash types. These types are long and get used multiple times, so we've factored them out below.
-require_relative './record_types.rb'
+  ## The file below defines global vars for some commonly used finite hash types. These types are long and get used multiple times, so we've factored them out below.
+  require_relative './record_types.rb'
 
-## The file below builds a schema model used during type checking.
-require_relative './build_schema.rb'
+  ## The file below builds a schema model used during type checking.
+  require_relative './build_schema.rb'
 
-
+}
 
 
 ### Annotations for type checked methods.
