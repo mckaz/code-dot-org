@@ -1,13 +1,14 @@
-require_relative './shared/middleware/helpers/auth_helpers.rb'
-require 'date'
+Kernel.silence_warnings {
+  require_relative './shared/middleware/helpers/auth_helpers.rb'
+  require 'date'
 
-RDL.nowrap ActiveRecord::Associations::ClassMethods
-RDL::Globals.info.info['ActiveRecord::Associations::ClassMethods'] = nil
+  RDL.nowrap ActiveRecord::Associations::ClassMethods
+  RDL::Globals.info.info['ActiveRecord::Associations::ClassMethods'] = nil
 
-Rails.application.eager_load!
+  Rails.application.eager_load!
 
-require_relative './record_types.rb'
-
+  require_relative './record_types.rb'
+}
 
 ### type checked methods
 RDL.type Dashboard, 'self.admin?', '(Integer) -> %bool', typecheck: :later, wrap: false 
