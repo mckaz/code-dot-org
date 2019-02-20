@@ -1,4 +1,3 @@
-Kernel.silence_warnings {
   require 'rdl'
   require 'types/core'
   require_relative '../db-types/sequel/db_types.rb'
@@ -12,7 +11,6 @@ Kernel.silence_warnings {
   ## The file below builds a schema model used during type checking.
   require_relative './build_schema.rb'
 
-}
 
 
 ### Annotations for type checked methods.
