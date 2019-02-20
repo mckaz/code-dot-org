@@ -2,6 +2,7 @@ Kernel.silence_warnings {
   require 'rdl'
   require 'types/core'
   require_relative '../db-types/sequel/db_types.rb'
+  #require_relative '../db_type_check/sequel_types.rb'
   require_relative './shared/middleware/helpers/auth_helpers.rb'
   require 'date'
 
@@ -120,7 +121,7 @@ RDL.type String, :to_json, "() -> String", wrap: false
 RDL.type StorageApps, 'self.get_published_project_data', "(Integer, #{$storage_apps_record}) -> {channel: Integer, name: String, thumbnailUrl: String, type: String, publishedAt: DateTime }", wrap: false 
 RDL.type UserHelpers, 'self.initial', "(String) -> String", wrap: false
 RDL.type UserHelpers, 'self.age_range_from_birthday', "(DateTime) -> String", wrap: false
-RDL.type Object, :user_storage_ids_table, "() -> ``Sequel::Mysql2::Database.gen_output_type([RDL::Type::SingletonType.new(:user_storage_ids)])``", wrap: false
+RDL.type Object, :user_storage_ids_table, "() -> ``Sequel::Mysql2::Database.gen_output_type(RDL::Type::SingletonType.new(:user_storage_ids))``", wrap: false
 RDL.type JSON, 'self.parse', "(String) -> Hash<String, %any>", wrap: false
 RDL.var_type Dashboard::User, :@row, $user_record
 
