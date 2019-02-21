@@ -1,9 +1,7 @@
 source 'https://rubygems.org'
 ruby '~> 2.2'
 
-#gem 'rdl', path: "~/Documents/works/comp-types/rdl/"#"~/Documents/works/public-rdl/rdl/"
-gem 'rdl', path: "~/Documents/works/pldi-rdl/rdl/"
-# git: 'https://github.com/mckaz/code-dot-org-rdl.git'
+gem 'rdl', git: 'https://github.com/plum-umd/rdl.git', branch: 'pldi-comp-types'
 
 # Force HTTPS for github-source gems.
 # This is a temporary workaround - remove when bundler version is >=2.0
