@@ -1,5 +1,6 @@
 Kernel.silence_warnings {
   require_relative './shared/middleware/helpers/auth_helpers.rb'
+  require_relative './pegasus/helpers/section_api_helpers.rb'
   require 'date'
 
   RDL.nowrap ActiveRecord::Associations::ClassMethods
