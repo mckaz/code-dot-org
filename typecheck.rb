@@ -1,19 +1,19 @@
-  require 'rdl'
-  require 'types/core'
-  require_relative '../db-types/sequel/db_types.rb'
-  #require_relative '../db_type_check/sequel_types.rb'
-  require_relative './shared/middleware/helpers/auth_helpers.rb'
-  require 'date'
+require 'rdl'
+require 'types/core'
+require_relative '../db-types/sequel/db_types.rb'
+require_relative './shared/middleware/helpers/auth_helpers.rb'
+require 'date'
 
-  ## The file below defines global vars for some commonly used finite hash types. These types are long and get used multiple times, so we've factored them out below.
-  require_relative './record_types.rb'
+## The file below defines global vars for some commonly used finite hash types. These types are long and get used multiple times, so we've factored them out below.
+require_relative './record_types.rb'
 
-  ## The file below builds a schema model used during type checking.
-  require_relative './build_schema.rb'
+## The file below builds a schema model used during type checking.
+require_relative './build_schema.rb'
 
 
 
 ### Annotations for type checked methods.
+## Methods located in ~/code-dot-org/pegasus/helper_modules/dashboard.rb
 RDL.type Dashboard, 'self.admin?', '(Integer) -> %bool', typecheck: :later, wrap: true
 RDL.type Dashboard::User, 'self.get_with_deleted', '(Integer) -> Dashboard::User', typecheck: :later, wrap: false
 RDL.type Dashboard::User, 'self.get', '(Integer) -> Dashboard::User', typecheck: :later, wrap: false
@@ -22,12 +22,14 @@ RDL.type Dashboard::User, :followed_by?, '(Integer) -> %bool', typecheck: :later
 RDL.type Dashboard::User, :owned_sections, "() -> Array<{id: Integer}>", typecheck: :later, wrap: false
 RDL.type Dashboard::User, :admin?, "() -> %bool", wrap: false, typecheck: :later
 RDL.type Dashboard::User, :has_permission?, '(String) -> %bool', wrap: false, typecheck: :later
+## Methods located in ~/code-dot-org/shared/middleware/helpers/auth_helpers.rb
 RDL.type Object, :teaches_student?, "(Integer, ?Integer) -> %bool", typecheck: :later, wrap: false
 RDL.type Object, :owns_section?, "(Integer) -> %bool", typecheck: :later, wrap: false
 RDL.type Object, :has_permission?, "(String) -> %bool", typecheck: :later, wrap: false
 ## Method below had documentation error.
 RDL.type Object, :current_user, "() -> User", wrap: false, typecheck: :later 
 RDL.type Object, :get_user_sharing_disabled, '(Integer) -> %bool', wrap: false, typecheck: :later
+## Methods located in ~/code-dot-org/pegasus/helpers/section_api_helpers.rb
 RDL.type DashboardStudent, 'self.fetch_user_students', "(Integer) -> Array<{ gender: String, user_type: String, hashed_email: String, secret_words: String, total_lines: Integer, birthday: Date, email: String, username: String, name: String, id: Integer }>", typecheck: :later, wrap: false 
 RDL.type DashboardStudent, 'self.fields', '() -> [:users__id___id,:users__name___name,:users__username___username,:users__email___email,:users__hashed_email___hashed_email,:users__user_type___user_type,:users__gender___gender,:users__birthday___birthday,:users__total_lines___total_lines,:users__secret_words___secret_words]', wrap: false, typecheck: :later
 RDL.type DashboardSection, 'self.fields', '() -> [:sections__id___id,:sections__name___name,:sections__code___code,:sections__stage_extras___stage_extras,:sections__pairing_allowed___pairing_allowed,:sections__login_type___login_type,:sections__sharing_disabled___sharing_disabled,:sections__hidden___hidden,:sections__grade___grade,:sections__script_id___script_id,:sections__course_id___course_id,:sections__user_id___teacher_id]', wrap: false, typecheck: :later
@@ -54,7 +56,8 @@ RDL.type DashboardSection, 'self.fetch_if_teacher', "(Integer, Integer) -> Dashb
 RDL.type DashboardSection, :script, "() -> #{$script_record}", typecheck: :later, wrap: false
 RDL.type DashboardSection, 'self.fetch_if_allowed', "(Integer, Integer) -> DashboardSection", typecheck: :later, wrap: false
 RDL.type DashboardStudent, 'self.random_secret_word', "() -> String", typecheck: :later, wrap: false
-RDL.type DashboardSection, 'self.valid_default_scripts', "(Integer, %bool) -> {} or Array<{ id: Integer, name: String, category: String, script_name: String, position: Integer, category_priority: Integer }>", typecheck: :later, wrap: false 
+RDL.type DashboardSection, 'self.valid_default_scripts', "(Integer, %bool) -> {} or Array<{ id: Integer, name: String, category: String, script_name: String, position: Integer, category_priority: Integer }>", typecheck: :later, wrap: false
+## Methods located in ~/code-dot-org/shared/middleware/helpers/storage_apps.rb
 RDL.type StorageApps, :users_paired_on_level?, "(Integer, Integer, Integer, Integer) -> %bool", typecheck: :later, wrap: false
 RDL.type StorageApps, :initialize, "(Integer) -> self", wrap: false, typecheck: :later
 RDL.type StorageApps, :create, "(String, ip: String, type: ?String, published_at: ?DateTime, remix_parent_id: ?Integer) -> String", wrap: false, typecheck: :later
