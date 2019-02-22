@@ -11,6 +11,9 @@ Kernel.silence_warnings {
   require_relative './record_types.rb'
 }
 
+
+RDL::Config.instance.check_comp_types = false ## dynamic checks not used in non-comp type case
+
 ### type checked methods
 RDL.type Dashboard, 'self.admin?', '(Integer) -> %bool', typecheck: :later, wrap: false 
 RDL.type Dashboard::User, 'self.get_with_deleted', "(Integer) -> Dashboard::User", typecheck: :later, wrap: false 
