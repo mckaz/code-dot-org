@@ -52,9 +52,10 @@ SELECT #{cast.call('username')} + 1
   LIMIT 1;
 SQL
     # Execute raw query using either ActiveRecord or Sequel object.
+    # MKCHANGE
     next_id = queryable.respond_to?(:connection) ?
-      queryable.connection.execute(query).first.first :
-      queryable.db.fetch(query).first.values.first
+      RDL.type_cast(queryable, "ActiveRecord::ConnectionHandling").connection.execute(query).first.first :
+      RDL.type_cast(queryable, "Sequel::Dataset").db.fetch(query).first.values.first
     username = "#{prefix}#{next_id}"
     raise "generate_username overflow: #{username}" if username.length > USERNAME_MAX_LENGTH
     username

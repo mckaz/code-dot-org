@@ -93,7 +93,8 @@ class StorageApps
     raise NotFound, "channel `#{channel_id}` not found" if update_count == 0
 
     project = @table.where(id: id).first
-    StorageApps.get_published_project_data(project, channel_id).merge(
+
+    StorageApps.get_published_project_data(channel_id, project).merge(
       # For privacy reasons, include only the first initial of the student's name.
       studentName: user && UserHelpers.initial(user[:name]),
       studentAgeRange: user && UserHelpers.age_range_from_birthday(user[:birthday]),
@@ -101,7 +102,7 @@ class StorageApps
   end
 
   # extracts published project data from a project (aka storage_apps table row).
-  def self.get_published_project_data(project, channel_id)
+  def self.get_published_project_data(channel_id, project) ## MKCHANGE: changed arg positions
     project_value = JSON.parse(project[:value])
     {
       channel: channel_id,

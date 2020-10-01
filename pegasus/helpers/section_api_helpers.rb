@@ -293,7 +293,7 @@ class DashboardSection
   #   or scripts dashboard db tables.
   # @param hidden [Boolean] True if the passed in item is hidden
   # @return AssignableInfo
-  def self.assignable_info(course_or_script, hidden=false)
+  def self.assignable_info(hidden, course_or_script) ## MKCHANGE: changed argument order
     info = ScriptConstants.assignable_info(course_or_script)
     info[:name] = I18n.t("#{info[:name]}_name", default: info[:name])
     info[:name] += " *" if hidden
@@ -341,7 +341,7 @@ class DashboardSection
         where(where_clause).
         select(:id, :name, :hidden).
         all.
-        map {|script| assignable_info(script, script[:hidden])}
+        map {|script| assignable_info(script[:hidden], script)}
     @@script_cache[script_cache_key] = scripts unless rack_env?(:levelbuilder)
     scripts
   end
@@ -394,7 +394,7 @@ class DashboardSection
       all.
       # Only return courses we've whitelisted in ScriptConstants
       select {|course| ScriptConstants.script_in_category?(:full_course, course[:name])}.
-      map {|course| assignable_info(course)}
+      map {|course| assignable_info(false, course)}
     @@course_cache[course_cache_key] = courses unless rack_env?(:levelbuilder)
     courses
   end
@@ -784,17 +784,17 @@ class DashboardUserScript
       updated_at: time_now,
       assigned_at: time_now
     )
-    missing_user_scripts = user_ids.select {|user_id| !all_existing_user_ids.include? user_id}
+    missing_user_scripts = RDL.type_cast(user_ids.select {|user_id| !all_existing_user_ids.include? user_id}, "Array<Integer>")
     return if missing_user_scripts.empty?
     Dashboard.db[:user_scripts].
       import(
         [:user_id, :script_id, :created_at, :updated_at, :assigned_at],
-        missing_user_scripts.zip(
+        RDL.type_cast(missing_user_scripts.zip(
           [script_id] * missing_user_scripts.count,
           [time_now] * missing_user_scripts.count,
           [time_now] * missing_user_scripts.count,
           [time_now] * missing_user_scripts.count
-        )
+      ), "Array<[Integer, Integer, Time, Time, Time]>")
       )
   end
 end

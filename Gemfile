@@ -1,5 +1,10 @@
 source 'https://rubygems.org'
-ruby '~> 2.2'
+#ruby '~> 2.6.3'
+
+
+#gem 'rdl', git: 'https://github.com/tupl-tufts/rdl.git', branch: 'infer'
+gem 'rdl', git: "https://github.com/mckaz/dsl-infer-rdl.git"#path: "~/Documents/works/tmp-rdl/rdl"
+gem 'pry'
 
 # Force HTTPS for github-source gems.
 # This is a temporary workaround - remove when bundler version is >=2.0
@@ -24,7 +29,7 @@ gem 'responders', '~> 2.0'
 
 gem 'sinatra', '~> 2.0.0.beta2', require: 'sinatra/base'
 
-gem 'mysql2', '~> 0.3.13'
+gem 'mysql2', '~> 0.4.10'#, '~> 0.3.13'
 # Ref: https://github.com/bdurand/seamless_database_pool/issues/38
 # Ref: https://github.com/bdurand/seamless_database_pool/pull/39
 gem 'seamless_database_pool', github: 'wjordan/seamless_database_pool', ref: 'cdo'
@@ -100,8 +105,8 @@ group :development, :test do
   gem 'rinku'
   gem 'rspec'
   gem 'selenium-webdriver', '3.8.0'
-  gem 'spring'
-  gem 'spring-commands-testunit'
+  #gem 'spring'
+  #gem 'spring-commands-testunit'
 
   # For pegasus PDF generation / merging testing.
   gem 'parallel_tests'
@@ -163,13 +168,13 @@ gem 'bootstrap-sass', '~> 2.3.2.2'
 # Ref: https://github.com/haml/haml/issues/940
 # https://github.com/haml/haml/issues/982
 # https://github.com/haml/haml/issues/985
-gem 'haml', github: 'wjordan/haml', ref: 'cdo'
+gem 'haml'#, github: 'wjordan/haml', ref: 'cdo'
 
 gem 'jquery-ui-rails', '~> 6.0.1'
 
-gem 'nokogiri', '~> 1.8.2'
+gem 'nokogiri'#, '~> 1.8.2'
 
-gem 'highline', '~> 1.6.21'
+gem 'highline'#, '~> 1.6.21'
 
 gem 'honeybadger' # error monitoring
 
@@ -213,7 +218,8 @@ gem 'petit', github: 'code-dot-org/petit'  # For URL shortening
 
 # JSON model serializer for REST APIs.
 gem 'active_model_serializers', github: 'rails-api/active_model_serializers', ref: '2962f3f64e7c672bfb5a13a8f739b5db073e5473'
-gem 'aws-sdk', '~> 2'
+
+gem 'aws-sdk'#, '~> 2'
 
 # Lint tools
 group :development, :staging do
@@ -292,3 +298,5 @@ end
 install_if require_pg do
   gem 'pg', require: false
 end
+
+
