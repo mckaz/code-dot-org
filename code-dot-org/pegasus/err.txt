@@ -1,0 +1,1 @@
+#<Sequel::Mysql2::Database: "mysql2://root@localhost/pegasus_development" {:encoding=>"utf8mb4", :default_group=>"cdo"}>

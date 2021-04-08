@@ -1,0 +1,66 @@
+/* Components to hide */
+#working-set-list-container {
+	display: none !important;
+}
+span#project-title.title {
+	display: none;
+}
+div.working-set-option-btn[style] {
+	display: none !important;
+}
+
+/* Recoloring */
+#sidebar {
+	text-shadow: none;
+	color: #333333;
+}
+li.jstree-leaf>a {
+	padding: 5px;
+}
+li.jstree-leaf>a>span {
+	font-size: 15px;
+	color: #333333;
+}
+li.jstree-open>a>span {
+	font-size: 15px;
+	color: #333333;
+}
+li.jstree-closed>a>span {
+	font-size: 15px;
+	color: #333333;
+}
+li.jstree-leaf>a>span.extension {
+	color: #333333;
+}
+
+.filetree-selection {
+	background-color: #CCCCCC;
+	border: none;
+	color: white;
+	font-weight: bolder;
+	padding: 13px;
+	width: 100% !important;
+}
+.filetree-selection-extension {
+	background-color: #CCCCCC;
+	border: none;
+	overflow: hidden;
+}
+
+#working-set-list-container, #project-files-container, #project-files-header {
+	background-color: white;
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-right-color: lightgray;
+	margin-left: -1px;
+}
+
+li.jstree-leaf>a.jstree-clicked>span {
+	color: #111111;
+}
+li.jstree-leaf>a.jstree-clicked>span.extension {
+	color: #111111;
+}
+a.jstree-clicked .extension {
+	color: #111111 !important;
+}

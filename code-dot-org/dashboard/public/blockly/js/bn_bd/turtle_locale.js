@@ -1,0 +1,249 @@
+var turtle_locale = {lc:{"ar":function(n){
+  if (n === 0) {
+    return 'zero';
+  }
+  if (n == 1) {
+    return 'one';
+  }
+  if (n == 2) {
+    return 'two';
+  }
+  if ((n % 100) >= 3 && (n % 100) <= 10 && n == Math.floor(n)) {
+    return 'few';
+  }
+  if ((n % 100) >= 11 && (n % 100) <= 99 && n == Math.floor(n)) {
+    return 'many';
+  }
+  return 'other';
+},"en":function(n){return n===1?"one":"other"},"bg":function(n){return n===1?"one":"other"},"bn":function(n){return n===1?"one":"other"},"ca":function(n){return n===1?"one":"other"},"cs":function(n){
+  if (n == 1) {
+    return 'one';
+  }
+  if (n == 2 || n == 3 || n == 4) {
+    return 'few';
+  }
+  return 'other';
+},"da":function(n){return n===1?"one":"other"},"de":function(n){return n===1?"one":"other"},"el":function(n){return n===1?"one":"other"},"es":function(n){return n===1?"one":"other"},"et":function(n){return n===1?"one":"other"},"eu":function(n){return n===1?"one":"other"},"fa":function(n){return "other"},"fi":function(n){return n===1?"one":"other"},"fil":function(n){return n===0||n==1?"one":"other"},"fr":function(n){return Math.floor(n)===0||Math.floor(n)==1?"one":"other"},"ga":function(n){return n==1?"one":(n==2?"two":"other")},"gl":function(n){return n===1?"one":"other"},"he":function(n){return n===1?"one":"other"},"hi":function(n){return n===0||n==1?"one":"other"},"hr":function(n){
+  if ((n % 10) == 1 && (n % 100) != 11) {
+    return 'one';
+  }
+  if ((n % 10) >= 2 && (n % 10) <= 4 &&
+      ((n % 100) < 12 || (n % 100) > 14) && n == Math.floor(n)) {
+    return 'few';
+  }
+  if ((n % 10) === 0 || ((n % 10) >= 5 && (n % 10) <= 9) ||
+      ((n % 100) >= 11 && (n % 100) <= 14) && n == Math.floor(n)) {
+    return 'many';
+  }
+  return 'other';
+},"hu":function(n){return "other"},"id":function(n){return "other"},"is":function(n){
+    return ((n%10) === 1 && (n%100) !== 11) ? 'one' : 'other';
+  },"it":function(n){return n===1?"one":"other"},"ja":function(n){return "other"},"ko":function(n){return "other"},"lt":function(n){
+  if ((n % 10) == 1 && ((n % 100) < 11 || (n % 100) > 19)) {
+    return 'one';
+  }
+  if ((n % 10) >= 2 && (n % 10) <= 9 &&
+      ((n % 100) < 11 || (n % 100) > 19) && n == Math.floor(n)) {
+    return 'few';
+  }
+  return 'other';
+},"lv":function(n){
+  if (n === 0) {
+    return 'zero';
+  }
+  if ((n % 10) == 1 && (n % 100) != 11) {
+    return 'one';
+  }
+  return 'other';
+},"mk":function(n){return (n%10)==1&&n!=11?"one":"other"},"mr":function(n){return n===1?"one":"other"},"ms":function(n){return "other"},"mt":function(n){
+  if (n == 1) {
+    return 'one';
+  }
+  if (n === 0 || ((n % 100) >= 2 && (n % 100) <= 4 && n == Math.floor(n))) {
+    return 'few';
+  }
+  if ((n % 100) >= 11 && (n % 100) <= 19 && n == Math.floor(n)) {
+    return 'many';
+  }
+  return 'other';
+},"nl":function(n){return n===1?"one":"other"},"no":function(n){return n===1?"one":"other"},"pl":function(n){
+  if (n == 1) {
+    return 'one';
+  }
+  if ((n % 10) >= 2 && (n % 10) <= 4 &&
+      ((n % 100) < 12 || (n % 100) > 14) && n == Math.floor(n)) {
+    return 'few';
+  }
+  if ((n % 10) === 0 || n != 1 && (n % 10) == 1 ||
+      ((n % 10) >= 5 && (n % 10) <= 9 || (n % 100) >= 12 && (n % 100) <= 14) &&
+      n == Math.floor(n)) {
+    return 'many';
+  }
+  return 'other';
+},"pt":function(n){return n===1?"one":"other"},"ro":function(n){
+  if (n == 1) {
+    return 'one';
+  }
+  if (n === 0 || n != 1 && (n % 100) >= 1 &&
+      (n % 100) <= 19 && n == Math.floor(n)) {
+    return 'few';
+  }
+  return 'other';
+},"ru":function(n){
+  if ((n % 10) == 1 && (n % 100) != 11) {
+    return 'one';
+  }
+  if ((n % 10) >= 2 && (n % 10) <= 4 &&
+      ((n % 100) < 12 || (n % 100) > 14) && n == Math.floor(n)) {
+    return 'few';
+  }
+  if ((n % 10) === 0 || ((n % 10) >= 5 && (n % 10) <= 9) ||
+      ((n % 100) >= 11 && (n % 100) <= 14) && n == Math.floor(n)) {
+    return 'many';
+  }
+  return 'other';
+},"sk":function(n){
+  if (n == 1) {
+    return 'one';
+  }
+  if (n == 2 || n == 3 || n == 4) {
+    return 'few';
+  }
+  return 'other';
+},"sl":function(n){
+  if ((n % 100) == 1) {
+    return 'one';
+  }
+  if ((n % 100) == 2) {
+    return 'two';
+  }
+  if ((n % 100) == 3 || (n % 100) == 4) {
+    return 'few';
+  }
+  return 'other';
+},"sq":function(n){return n===1?"one":"other"},"sr":function(n){
+  if ((n % 10) == 1 && (n % 100) != 11) {
+    return 'one';
+  }
+  if ((n % 10) >= 2 && (n % 10) <= 4 &&
+      ((n % 100) < 12 || (n % 100) > 14) && n == Math.floor(n)) {
+    return 'few';
+  }
+  if ((n % 10) === 0 || ((n % 10) >= 5 && (n % 10) <= 9) ||
+      ((n % 100) >= 11 && (n % 100) <= 14) && n == Math.floor(n)) {
+    return 'many';
+  }
+  return 'other';
+},"sv":function(n){return n===1?"one":"other"},"ta":function(n){return n===1?"one":"other"},"te":function(n){return n===1?"one":"other"},"th":function(n){return "other"},"tr":function(n){return n===1?"one":"other"},"uk":function(n){
+  if ((n % 10) == 1 && (n % 100) != 11) {
+    return 'one';
+  }
+  if ((n % 10) >= 2 && (n % 10) <= 4 &&
+      ((n % 100) < 12 || (n % 100) > 14) && n == Math.floor(n)) {
+    return 'few';
+  }
+  if ((n % 10) === 0 || ((n % 10) >= 5 && (n % 10) <= 9) ||
+      ((n % 100) >= 11 && (n % 100) <= 14) && n == Math.floor(n)) {
+    return 'many';
+  }
+  return 'other';
+},"ur":function(n){return n===1?"one":"other"},"vi":function(n){return "other"},"zh":function(n){return "other"}},
+c:function(d,k){if(!d)throw new Error("MessageFormat: Data required for '"+k+"'.")},
+n:function(d,k,o){if(isNaN(d[k]))throw new Error("MessageFormat: '"+k+"' isn't a number.");return d[k]-(o||0)},
+v:function(d,k){turtle_locale.c(d,k);return d[k]},
+p:function(d,k,o,l,p){turtle_locale.c(d,k);return d[k] in p?p[d[k]]:(k=turtle_locale.lc[l](d[k]-o),k in p?p[k]:p.other)},
+s:function(d,k,p){turtle_locale.c(d,k);return d[k] in p?p[d[k]]:p.other}};
+(window.blockly = window.blockly || {}).turtle_locale = {
+"blocksUsed":function(d){return "% ব্লক ব্যবহার করা হয়ছে"},
+"branches":function(d){return "শাখা"},
+"catColour":function(d){return "রং"},
+"catControl":function(d){return "চক্র"},
+"catMath":function(d){return "গণিত"},
+"catProcedures":function(d){return "ফাংশনগুলি"},
+"catTurtle":function(d){return "ক্রিয়া"},
+"catVariables":function(d){return "চলকগুলো"},
+"catLogic":function(d){return "যুক্তি"},
+"colourTooltip":function(d){return "পেন্সিলের রং পরিবর্তন করে।"},
+"createACircle":function(d){return "একটি বৃত্ত তৈরি করুন"},
+"createSnowflakeSquare":function(d){return "create a snowflake of type square"},
+"createSnowflakeParallelogram":function(d){return "create a snowflake of type parallelogram"},
+"createSnowflakeLine":function(d){return "create a snowflake of type line"},
+"createSnowflakeSpiral":function(d){return "create a snowflake of type spiral"},
+"createSnowflakeFlower":function(d){return "create a snowflake of type flower"},
+"createSnowflakeFractal":function(d){return "create a snowflake of type fractal"},
+"createSnowflakeRandom":function(d){return "create a snowflake of type random"},
+"createASnowflakeBranch":function(d){return "create a snowflake branch"},
+"degrees":function(d){return "ডিগ্রী"},
+"depth":function(d){return "গভীরতা"},
+"dots":function(d){return "পিক্সেলগুলো"},
+"drawACircle":function(d){return "একটি বৃত্ত আঁকুন।"},
+"drawAFlower":function(d){return "ফুল আঁকুন"},
+"drawAHexagon":function(d){return "draw a hexagon"},
+"drawAHouse":function(d){return "একটি ঘর আঁকুন।"},
+"drawAPlanet":function(d){return "গ্রহ আঁকুন"},
+"drawARhombus":function(d){return "draw a rhombus"},
+"drawARobot":function(d){return "রোবট আঁকান "},
+"drawARocket":function(d){return "রকেট আঁকুন"},
+"drawASnowflake":function(d){return "draw a snowflake"},
+"drawASnowman":function(d){return "draw a snowman"},
+"drawASquare":function(d){return "একটি বর্গ আঁকুন।"},
+"drawAStar":function(d){return "একটি বর্গ আঁকুন"},
+"drawATree":function(d){return "একটি গাছ আঁকুন।"},
+"drawATriangle":function(d){return "একটি ত্রিভুজ আঁকুন।"},
+"drawUpperWave":function(d){return "উপরের ঢেউ আঁকুন"},
+"drawLowerWave":function(d){return "নিচের ঢেউ আঁকুন"},
+"drawSticker":function(d){return "স্টিকার আঁকুন"},
+"heightParameter":function(d){return "উচ্চতা"},
+"hideTurtle":function(d){return "শিল্পী লুকান"},
+"jump":function(d){return "লাফান"},
+"jumpTo":function(d){return "jump to"},
+"jumpBackward":function(d){return "লাফ দিয়ে পিছান"},
+"jumpForward":function(d){return "লাফ দিয়ে এগোন"},
+"jumpTooltip":function(d){return "Moves the artist without leaving any marks."},
+"jumpEastTooltip":function(d){return "Moves the artist east without leaving any marks."},
+"jumpNorthTooltip":function(d){return "Moves the artist north without leaving any marks."},
+"jumpNortheastTooltip":function(d){return "Moves the artist northeast without leaving any marks."},
+"jumpNorthwestTooltip":function(d){return "Moves the artist northwest without leaving any marks."},
+"jumpSouthTooltip":function(d){return "Moves the artist south without leaving any marks."},
+"jumpSoutheastTooltip":function(d){return "Moves the artist southeast without leaving any marks."},
+"jumpSouthwestTooltip":function(d){return "Moves the artist southwest without leaving any marks."},
+"jumpWestTooltip":function(d){return "Moves the artist west without leaving any marks."},
+"lengthFeedback":function(d){return "You got it right except for the lengths to move."},
+"lengthParameter":function(d){return "দৈর্ঘ্য"},
+"loopVariable":function(d){return "গণক"},
+"moveBackward":function(d){return "move backward by"},
+"moveEastTooltip":function(d){return "Moves the artist east."},
+"moveForward":function(d){return "সামনে এগিয়ে যান"},
+"moveForwardTooltip":function(d){return "Moves the artist forward."},
+"moveNorthTooltip":function(d){return "Moves the artist north."},
+"moveNortheastTooltip":function(d){return "Moves the artist northeast."},
+"moveNorthwestTooltip":function(d){return "Moves the artist northwest."},
+"moveSouthTooltip":function(d){return "Moves the artist south."},
+"moveSoutheastTooltip":function(d){return "Moves the artist southeast."},
+"moveSouthwestTooltip":function(d){return "Moves the artist southwest."},
+"moveWestTooltip":function(d){return "Moves the artist west."},
+"moveTooltip":function(d){return "Moves the artist forward or backward by the specified amount."},
+"notBlackColour":function(d){return "You need to set a color other than black for this puzzle."},
+"numBlocksNeeded":function(d){return "This puzzle can be solved with %1 blocks.  You used %2."},
+"penDown":function(d){return "পেন্সিল নিচে"},
+"penTooltip":function(d){return "Lifts or lowers the pencil, to start or stop drawing."},
+"penUp":function(d){return "পেন্সিল তোল"},
+"reinfFeedbackMsg":function(d){return "Here is your drawing! Keep working on it or continue to the next puzzle."},
+"setAlpha":function(d){return "আলফা সেট করুন"},
+"setCharacter":function(d){return "set character to "+turtle_locale.v(d,"character")},
+"setColour":function(d){return "রঙ স্থির (সেট) করুন"},
+"setPattern":function(d){return "নমুনা সেট করুন"},
+"setWidth":function(d){return "প্রস্থ স্থির (সেট) করুন"},
+"shareDrawing":function(d){return "Share your drawing:"},
+"showMe":function(d){return "আমাকে দেখান"},
+"showTurtle":function(d){return "শিল্পী প্রদর্শন করুন"},
+"sizeParameter":function(d){return "আকার"},
+"step":function(d){return "ধাপ"},
+"tooFewColours":function(d){return "You need to use at least %1 different colors for this puzzle.  You used only %2."},
+"turnLeft":function(d){return "বামে যান"},
+"turnRight":function(d){return "ডানে যান"},
+"turnRightTooltip":function(d){return "Turns the artist right by the specified angle."},
+"turnTooltip":function(d){return "Turns the artist left or right by the specified number of degrees."},
+"turtleVisibilityTooltip":function(d){return "Makes the artist visible or invisible."},
+"widthTooltip":function(d){return "পেন্সিলের প্রস্থ পরিবর্তন করে।"},
+"wrongColour":function(d){return "আপনার ছবির রঙ ভুল আছে।  এই ধাঁধার জন্য এটি %1 করা প্রয়োজন।"}};
